@@ -12,11 +12,13 @@ parser:
     fields: 
         - {name: url,          query: url}
         - {name: name,         query: "at(div#bizinfo/h1);strip_text"}
-        - {name: city_st_zip,  query: "at(div#bizinfo/p[3]);inner_html;split(<br>);last;strip_text"}
-        - {name: address,      query: "at(div#bizinfo/p[3]);inner_html;split(<br>);first;strip_text"}
+        - {name: address,      query: "at(div#bizinfo/p[3]);children;select({|c|c.name=='text'});first;inner_text;strip"}
+        - {name: city_st_zip,  query: "at(div#bizinfo/p[3]);children;select({|c|c.name=='text'});last;inner_text;strip"}
+        
         # - {name: city,         query: "at(div#bizinfo/p[3]);inner_html;split(<br>);last;split(,);first;strip_text"}
         # - {name: state,        query: "at(div#bizinfo/p[3]);inner_html;split(<br>);last;regexp_scan( ([A-Z][A-Z]) \d);flatten;first;strip_text"}
         # - {name: zip,          query: "at(div#bizinfo/p[3]);inner_html;split(<br>);last;regexp_scan(\d\d\d\d\d);last"}
+        
         - {name: care_types,   query: "at(p#careCategories);search(a);map({|a|a.text})"}
         - {name: client,       query: "at(div.basicInquiry);nil?"}
         - {name: images,       query: "at(div#profile/div#factsheet);search(img);map({|i|i.src})"}
