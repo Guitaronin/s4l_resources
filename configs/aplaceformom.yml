@@ -1,0 +1,28 @@
+---
+domain: aplaceformom
+navigation: 
+    - url:              http://www.aplaceformom.com/
+      control_selector: "div#subdomainPostDescription//div.second-cell"
+      control_type:     link
+      
+    - control_selector: "div#geoSearchByCity"
+      control_type:     link
+      
+    - control_selector: "div#propertyList"
+      control_type:     link
+    
+parser: 
+    fields: 
+        - {name: url,         query: url}
+        - {name: provider_id, query: "url;split(-);last;to_i"}
+        - {name: name,        query: "at(div#splashContent/div.propHeading/div.heading1/span);strip_text"}
+        - {name: city,        query: "at(div#splashContent/div.propHeading/div.heading2/span[1]);strip_text"}
+        - {name: state,       query: "at(div#splashContent/div.propHeading/div.heading2/span[2]);strip_text"}
+        - {name: care_types,  query: "at(div#splashContent/div.propHeading/div.heading3/span);strip_text"}
+        - {name: image,       query: "at(div#splashContent/img);src"}
+        - {name: description, query: "at(div#splashContent/div#ctl00_MainContent_ucSplash_divPropDesc);strip_text"}
+        - {name: amenities,   query: "at(div#splashContent//ul#propertyAmenities);search(li);map({|l| l.text.strip})"}
+        
+database:
+    database:   seniors_for_living
+    collection: SeniorsFacility

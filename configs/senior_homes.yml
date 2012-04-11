@@ -1,0 +1,28 @@
+---
+domain: seniorhomes
+navigation: 
+    - url:              http://www.seniorhomes.com/
+      control_selector: "div#browse"
+      control_type:     link
+      
+    - control_selector_query: "search(div#main/div.featured/h3/a)"
+      control_type:           link
+    
+parser: 
+    fields: 
+        - {name: url,          query: url}
+        - {name: name,         query: "at(div#bizinfo/h1);strip_text"}
+        - {name: city_st_zip,  query: "at(div#bizinfo/p[3]);inner_html;split(<br>);last;strip_text"}
+        - {name: address,      query: "at(div#bizinfo/p[3]);inner_html;split(<br>);first;strip_text"}
+        # - {name: city,         query: "at(div#bizinfo/p[3]);inner_html;split(<br>);last;split(,);first;strip_text"}
+        # - {name: state,        query: "at(div#bizinfo/p[3]);inner_html;split(<br>);last;regexp_scan( ([A-Z][A-Z]) \d);flatten;first;strip_text"}
+        # - {name: zip,          query: "at(div#bizinfo/p[3]);inner_html;split(<br>);last;regexp_scan(\d\d\d\d\d);last"}
+        - {name: care_types,   query: "at(p#careCategories);search(a);map({|a|a.text})"}
+        - {name: client,       query: "at(div.basicInquiry);nil?"}
+        - {name: images,       query: "at(div#profile/div#factsheet);search(img);map({|i|i.src})"}
+        - {name: description,  query: "at(div#profile/div#factsheet);strip_text"}
+        - {name: requirements, query: "at(div#requirements);search(p);map({|l| l.text.strip})"}
+        
+database:
+    database:   seniors_for_living
+    collection: SeniorsFacility

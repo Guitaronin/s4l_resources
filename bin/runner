@@ -1,0 +1,47 @@
+#!/usr/bin/env ruby
+
+$:.unshift(File.join(File.dirname(__FILE__), "/.."))
+require "rubygems"
+require 'optparse'
+require 'etl'
+# require '/Users/arianryan/Projects/Scrapers/etl/lib/etl'
+require 'mongomatic'
+require 'models/seniors_facility'
+
+ETL::Log.set :level, 'info'
+ETL::Log.set :file, File.join(File.dirname(__FILE__), '..', 'log', 'app.log')
+ETL::Log.set :archive, 'monthly'
+ETL::Log.set :on, true
+
+Signal.trap("SIGTERM") do
+  ETL::Log.fatal "SIGTERM recieved. Shutting down."
+  exit
+end
+
+ETL::Log.info 'initializing...'
+ETL::Log.info 'parsing option flags'
+
+opt = {}
+OptionParser.new do |o|
+  o.on('-c', '--config [config]', "Provide this if you only want to select a specific config file.") do |config|
+    opt[:config] = config
+  end
+
+  o.on("-h", "--help", "Show help documentation") do |h|
+    puts o
+    exit
+  end
+end.parse!
+
+
+start   = Time.now
+
+Mongomatic.db = Mongo::Connection.new.db('seniors_for_living')
+config_file = File.join(File.dirname(__FILE__), "..", 'configs', opt[:config])
+
+yml    = File.open(config_file, 'r').read
+config = YAML.load yml
+etl    = ETL::Controller.new(config)
+etl.go
+
+ETL::Log.info "finished in #{Time.now - start} seconds"
