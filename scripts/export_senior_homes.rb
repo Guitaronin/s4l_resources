@@ -67,7 +67,7 @@ class SeniorsFacility < Mongomatic::Base
   end
   
   def description
-    self['description'].sub(/__+/, '')
+    self['description'] ? self['description'].sub(/__+/, '') : nil
   end
   
 end
